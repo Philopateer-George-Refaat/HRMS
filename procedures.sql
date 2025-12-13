@@ -988,7 +988,7 @@ BEGIN
         national_id,
         date_of_birth,
         country_of_birth,
-        password_hash,
+        password_hash
         
     )
     VALUES 
@@ -1003,7 +1003,7 @@ BEGIN
         @NationalID,
         @DateOfBirth,
         @CountryOfBirth,
-        @PasswordHash,
+        @PasswordHash
        
     );
 
