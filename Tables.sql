@@ -172,8 +172,8 @@ ADD FOREIGN KEY (department_head_id)
     REFERENCES Employee(employee_id);
 
 ALTER TABLE Employee
-ADD password_hash VARBINARY(64),
-    password_salt VARBINARY(32);
+ADD password_hash VARBINARY(64);
+    
 
 -------
   
@@ -645,3 +645,20 @@ CREATE TABLE ManagerNotes (
 );
 -------
 
+ALTER TABLE SystemAdministrator ADD password_hash VARBINARY(64);
+ALTER TABLE HRAdministrator ADD password_hash VARBINARY(64);
+ALTER TABLE LineManager ADD password_hash VARBINARY(64);
+
+
+
+
+
+-- Set password "admin123" for Ahmed (employee_id = 1, System Admin)
+UPDATE SystemAdministrator 
+SET password_hash = HASHBYTES('SHA2_256', 'admin123')
+WHERE employee_id = 1;
+
+-- Set password "hr123" for Sara (employee_id = 2)
+UPDATE HRAdministrator 
+SET password_hash = HASHBYTES('SHA2_256', 'hr123')
+WHERE employee_id = 2;
