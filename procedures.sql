@@ -974,7 +974,7 @@ BEGIN
 
     -- Retrieve hashed password and salt from SESSION_CONTEXT
     DECLARE @PasswordHash VARBINARY(64) = SESSION_CONTEXT(N'PasswordHash');
-    DECLARE @PasswordSalt VARBINARY(32) = SESSION_CONTEXT(N'PasswordSalt');
+    
 
     INSERT INTO Employee 
     (
@@ -989,7 +989,7 @@ BEGIN
         date_of_birth,
         country_of_birth,
         password_hash,
-        password_salt
+        
     )
     VALUES 
     (
@@ -1004,7 +1004,7 @@ BEGIN
         @DateOfBirth,
         @CountryOfBirth,
         @PasswordHash,
-        @PasswordSalt
+       
     );
 
     SET @NewEmployeeID = SCOPE_IDENTITY();
@@ -1472,6 +1472,7 @@ BEGIN
         SELECT 1 
         FROM HRAdministrator 
         WHERE employee_id = @AdminID
+        AND password_hash = HASHBYTES('SHA2_256', @Password)
     )
     BEGIN
         SELECT 'Administrator credentials authenticated successfully.' AS Message;
@@ -1480,6 +1481,22 @@ BEGIN
     BEGIN
         SELECT 'Authentication failed. Invalid administrator credentials.' AS Message;
     END
+END;
+
+GO
+CREATE PROC ApplyLeaveConfiguration
+AS
+BEGIN
+    
+
+   
+    UPDATE LeaveRequest
+    SET status = 'Applied',
+        approval_timing = GETDATE()
+    WHERE status = 'Validated';
+
+    SELECT 'Leave configurations have been successfully applied.' AS Message;
+
 END;
 
 GO
