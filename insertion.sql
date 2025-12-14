@@ -101,17 +101,21 @@ VALUES
 -------------------------
 -- 12. Employee
 -------------------------
+-- Ahmed: password 'Password123'
 INSERT INTO Employee (first_name, last_name, full_name, national_id, date_of_birth, country_of_birth, phone, email,
                       address, emergency_contact_name, emergency_contact_phone, relationship, biography, employment_progress,
                       account_status, employment_status, hire_date, is_active, profile_completion, department_id, position_id, manager_id,
-                      contract_id, tax_form_id, salary_type_id, pay_grade)
+                      contract_id, tax_form_id, salary_type_id, pay_grade, password_hash)
 VALUES
 ('Ahmed', 'Hossam', 'Ahmed Hossam', '12345678901234', '1990-05-10', 'Egypt', '+201234567890', 'ahmed@example.com',
- 'Cairo, Egypt', ' nigga Hossam ', '+201234567891', 'Brother', 'Experienced software engineer', 'Active', 'Active', 'Full-time', 
- '2020-01-01', 1, 100, 1, 1, NULL, 1, 1, 2, 1),
+ 'Cairo, Egypt', 'Hossam', '+201234567891', 'Brother', 'Experienced software engineer', 'Active', 'Active', 'Full-time', 
+ '2020-01-01', 1, 100, 1, 1, NULL, 1, 1, 2, 1,
+ HASHBYTES('SHA2_256', CONVERT(VARBINARY(MAX), 'Password123'))),
+
 ('Sara', 'Ali', 'Sara Ali', '98765432109876', '1988-08-15', 'Egypt', '+201112223334', 'sara@example.com',
  'Cairo, Egypt', 'Mohamed Ali', '+201112223335', 'Father', 'HR specialist', 'Active', 'Active', 'Full-time', 
- '2018-03-01', 1, 90, 2, 2, 1, 2, 2, 2, 2);
+ '2018-03-01', 1, 90, 2, 2, 1, 2, 2, 2, 2,
+ HASHBYTES('SHA2_256', CONVERT(VARBINARY(MAX), 'Password123')));
 
 -------------------------
 -- 13. HRAdministrator, SystemAdministrator, LineManager, PayrollSpecialist
@@ -127,6 +131,12 @@ VALUES (1, 5, 'IT Department', '5000');
 
 INSERT INTO PayrollSpecialist (employee_id, assigned_region, processing_frequency, last_processed_period)
 VALUES (2, 'Cairo', 'Monthly', '2025-10');
+
+INSERT INTO Role (role_name, purpose) VALUES ('SystemAdmin', 'Full system access');
+INSERT INTO Role (role_name, purpose) VALUES ('HRAdmin', 'Manage HR processes');
+INSERT INTO Role (role_name, purpose) VALUES ('LineManager', 'Manage team and approvals');
+INSERT INTO Role (role_name, purpose) VALUES ('PayrollSpecialist', 'Handle payroll processing');
+INSERT INTO Role (role_name, purpose) VALUES ('Employee', 'Regular employee');
 
 -------------------------
 -- 14. Skills and Employee_Skill
