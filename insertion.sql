@@ -1,5 +1,17 @@
 USE HRMS;
 
+
+
+
+
+
+INSERT INTO LineManager (employee_id, team_size, supervised_departments, approval_limit)
+SELECT employee_id, 5, 'General', 1000
+FROM Employee
+WHERE email = 'philo@example.com'; -- <--- PUT THE EMAIL YOU REGISTERED HERE
+
+
+
 -------------------------
 -- 1. Currency
 -------------------------
@@ -101,53 +113,26 @@ VALUES
 -------------------------
 -- 12. Employee
 -------------------------
-/*INSERT INTO Employee (first_name, last_name, full_name, national_id, date_of_birth, country_of_birth, phone, email,
+-- Ahmed: password 'Password123'
+INSERT INTO Employee (first_name, last_name, full_name, national_id, date_of_birth, country_of_birth, phone, email,
                       address, emergency_contact_name, emergency_contact_phone, relationship, biography, employment_progress,
                       account_status, employment_status, hire_date, is_active, profile_completion, department_id, position_id, manager_id,
-                      contract_id, tax_form_id, salary_type_id, pay_grade)
+                      contract_id, tax_form_id, salary_type_id, pay_grade, password_hash)
 VALUES
 ('Ahmed', 'Hossam', 'Ahmed Hossam', '12345678901234', '1990-05-10', 'Egypt', '+201234567890', 'ahmed@example.com',
- 'Cairo, Egypt', ' nigga Hossam ', '+201234567891', 'Brother', 'Experienced software engineer', 'Active', 'Active', 'Full-time', 
- '2020-01-01', 1, 100, 1, 1, NULL, 1, 1, 2, 1),
+ 'Cairo, Egypt', 'Hossam', '+201234567891', 'Brother', 'Experienced software engineer', 'Active', 'Active', 'Full-time', 
+ '2020-01-01', 1, 100, 1, 1, NULL, 1, 1, 2, 1,
+ HASHBYTES('SHA2_256', CONVERT(VARBINARY(MAX), 'Password123'))),
+
 ('Sara', 'Ali', 'Sara Ali', '98765432109876', '1988-08-15', 'Egypt', '+201112223334', 'sara@example.com',
  'Cairo, Egypt', 'Mohamed Ali', '+201112223335', 'Father', 'HR specialist', 'Active', 'Active', 'Full-time', 
- '2018-03-01', 1, 90, 2, 2, 1, 2, 2, 2, 2);*/
-
- INSERT INTO Employee (
-    first_name, last_name, full_name, national_id, date_of_birth, country_of_birth, 
-    phone, email, address, emergency_contact_name, emergency_contact_phone, relationship, 
-    biography, employment_progress, account_status, employment_status, hire_date, is_active, 
-    profile_completion, department_id, position_id, manager_id, contract_id, tax_form_id, 
-    salary_type_id, pay_grade, password_hash
-)
-VALUES (
-    'Ahmed', 'Hossam', 'Ahmed Hossam', '12345678901234', '1990-05-10', 'Egypt', 
-    '+201234567890', 'ahmed@example.com', 'Cairo, Egypt', 'Ali Hossam', '+201234567891', 
-    'Brother', 'Experienced software engineer', 'Active', 'Active', 'Full-time', 
-    '2020-01-01', 1, 100, 1, 1, NULL, 1, 1, 2, 1,
-    HASHBYTES('SHA2_256', 'Ahmed@2024')
-);
-
--- Insert Employee 2: Sara Ali (HR Admin, Payroll Specialist)
-INSERT INTO Employee (
-    first_name, last_name, full_name, national_id, date_of_birth, country_of_birth, 
-    phone, email, address, emergency_contact_name, emergency_contact_phone, relationship, 
-    biography, employment_progress, account_status, employment_status, hire_date, is_active, 
-    profile_completion, department_id, position_id, manager_id, contract_id, tax_form_id, 
-    salary_type_id, pay_grade, password_hash
-)
-VALUES (
-    'Sara', 'Ali', 'Sara Ali', '98765432109876', '1988-08-15', 'Egypt', 
-    '+201112223334', 'sara@example.com', 'Cairo, Egypt', 'Mohamed Ali', '+201112223335', 
-    'Father', 'HR specialist', 'Active', 'Active', 'Full-time', 
-    '2018-03-01', 1, 90, 2, 2, 1, 2, 2, 2, 2,
-    HASHBYTES('SHA2_256', 'Sara@2024')
-);
+ '2018-03-01', 1, 90, 2, 2, 1, 2, 2, 2, 2,
+ HASHBYTES('SHA2_256', CONVERT(VARBINARY(MAX), 'Password123')));
 
 -------------------------
 -- 13. HRAdministrator, SystemAdministrator, LineManager, PayrollSpecialist
 -------------------------
-/*INSERT INTO HRAdministrator (employee_id, approval_level, record_access_scope, document_validation_rights)
+INSERT INTO HRAdministrator (employee_id, approval_level, record_access_scope, document_validation_rights)
 VALUES (2, 'Level 1', 'Department', 'Yes');
 
 INSERT INTO SystemAdministrator (employee_id, system_privilege_level, configurable_fields, audit_visibility_scope)
@@ -157,78 +142,13 @@ INSERT INTO LineManager (employee_id, team_size, supervised_departments, approva
 VALUES (1, 5, 'IT Department', '5000');
 
 INSERT INTO PayrollSpecialist (employee_id, assigned_region, processing_frequency, last_processed_period)
-VALUES (2, 'Cairo', 'Monthly', '2025-10');*/
+VALUES (2, 'Cairo', 'Monthly', '2025-10');
 
--------------------------
--- Role-Specific Table Insertions with Password Hashes
--------------------------
-
--- System Administrator (Ahmed - employee_id: 1)
-INSERT INTO SystemAdministrator (
-    employee_id, 
-    system_privilege_level, 
-    configurable_fields, 
-    audit_visibility_scope,
-    password_hash
-)
-VALUES (
-    1, 
-    'Full', 
-    'All', 
-    'All',
-    HASHBYTES('SHA2_256', 'Ahmed@2024')
-);
-
--- HR Administrator (Sara - employee_id: 2)
-INSERT INTO HRAdministrator (
-    employee_id, 
-    approval_level, 
-    record_access_scope, 
-    document_validation_rights,
-    password_hash
-)
-VALUES (
-    2, 
-    'Level 1', 
-    'Department', 
-    'Yes',
-    HASHBYTES('SHA2_256', 'Sara@2024')
-);
-
--- Line Manager (Ahmed - employee_id: 1)
-INSERT INTO LineManager (
-    employee_id, 
-    team_size, 
-    supervised_departments, 
-    approval_limit,
-    password_hash
-)
-VALUES (
-    1, 
-    5, 
-    'IT Department', 
-    '5000',
-    HASHBYTES('SHA2_256', 'Ahmed@2024')
-);
-
--- Payroll Specialist (Sara - employee_id: 2)
--- Note: PayrollSpecialist table doesn't have password_hash column based on original schema
--- If you need to add it, run: ALTER TABLE PayrollSpecialist ADD password_hash VARBINARY(64);
-INSERT INTO PayrollSpecialist (
-    employee_id, 
-    assigned_region, 
-    processing_frequency, 
-    last_processed_period
-)
-VALUES (
-    2, 
-    'Cairo', 
-    'Monthly', 
-    '2025-10'
-);
-
-
-
+INSERT INTO Role (role_name, purpose) VALUES ('SystemAdmin', 'Full system access');
+INSERT INTO Role (role_name, purpose) VALUES ('HRAdmin', 'Manage HR processes');
+INSERT INTO Role (role_name, purpose) VALUES ('LineManager', 'Manage team and approvals');
+INSERT INTO Role (role_name, purpose) VALUES ('PayrollSpecialist', 'Handle payroll processing');
+INSERT INTO Role (role_name, purpose) VALUES ('Employee', 'Regular employee');
 
 -------------------------
 -- 14. Skills and Employee_Skill
