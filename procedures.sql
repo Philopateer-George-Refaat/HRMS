@@ -60,6 +60,103 @@ BEGIN
         PRINT 'Employee information inserted successfully.'
         END
 END;
+
+GO
+ALTER PROCEDURE AddEmployee 
+    @FullName varchar(200),
+    @NationalID varchar(50),
+    @DateOfBirth date,
+    @CountryOfBirth varchar(100),
+    @Phone varchar(50),
+    @Email varchar(100),
+    @Address varchar(255),
+    @EmergencyContactName varchar(100),
+    @EmergencyContactPhone varchar(50),
+    @Relationship varchar(50),
+    @Biography varchar(max),
+    @EmploymentProgress varchar(100),
+    @AccountStatus varchar(50),
+    @EmploymentStatus varchar(50),
+    @HireDate date, 
+    @IsActive bit, 
+    @ProfileCompletion int, 
+    @DepartmentID int,
+    @PositionID int,
+    @ManagerID int,
+    @ContractID int,
+    @TaxFormID int,
+    @SalaryTypeID int,
+    @PayGrade varchar(50),
+    @PasswordHash varbinary(max)   -- <<< ADD THIS
+AS
+BEGIN 
+    INSERT INTO Employee(
+        full_name, national_id, date_of_birth, country_of_birth, phone,
+        email, address, emergency_contact_name, emergency_contact_phone, relationship,
+        biography, employment_progress, account_status, employment_status, hire_date,
+        is_active, profile_completion, department_id, position_id, manager_id,
+        contract_id, tax_form_id, salary_type_id, pay_grade, password_hash
+    )
+    VALUES(
+        @FullName, @NationalID, @DateOfBirth, @CountryOfBirth, @Phone,
+        @Email, @Address, @EmergencyContactName, @EmergencyContactPhone, @Relationship,
+        @Biography, @EmploymentProgress, @AccountStatus, @EmploymentStatus, @HireDate,
+        @IsActive, @ProfileCompletion, @DepartmentID, @PositionID, @ManagerID,
+        @ContractID, @TaxFormID, @SalaryTypeID, @PayGrade, @PasswordHash
+    );
+
+    PRINT 'Employee information inserted successfully.';
+END;
+GO
+ALTER PROCEDURE AddEmployee 
+    @FullName varchar(200),
+    @NationalID varchar(50),
+    @DateOfBirth date,
+    @CountryOfBirth varchar(100),
+    @Phone varchar(50),
+    @Email varchar(100),
+    @Address varchar(255),
+    @EmergencyContactName varchar(100),
+    @EmergencyContactPhone varchar(50),
+    @Relationship varchar(50),
+    @Biography varchar(max),
+    @EmploymentProgress varchar(100),
+    @AccountStatus varchar(50),
+    @EmploymentStatus varchar(50),
+    @HireDate date, 
+    @IsActive bit, 
+    @ProfileCompletion int, 
+    @DepartmentID int,
+    @PositionID int,
+    @ManagerID int = NULL,
+    @ContractID int,
+    @TaxFormID int,
+    @SalaryTypeID int,
+    @PayGrade varchar(50),
+    @PasswordHash varbinary(max)
+AS
+BEGIN
+    SET NOCOUNT ON;
+
+    INSERT INTO Employee (
+        full_name, national_id, date_of_birth, country_of_birth, phone,
+        email, address, emergency_contact_name, emergency_contact_phone, relationship,
+        biography, employment_progress, account_status, employment_status, hire_date,
+        is_active, profile_completion, department_id, position_id, manager_id,
+        contract_id, tax_form_id, salary_type_id, pay_grade, password_hash
+    )
+    OUTPUT INSERTED.employee_id
+    VALUES (
+        @FullName, @NationalID, @DateOfBirth, @CountryOfBirth, @Phone,
+        @Email, @Address, @EmergencyContactName, @EmergencyContactPhone, @Relationship,
+        @Biography, @EmploymentProgress, @AccountStatus, @EmploymentStatus, @HireDate,
+        @IsActive, @ProfileCompletion, @DepartmentID, @PositionID, @ManagerID,
+        @ContractID, @TaxFormID, @SalaryTypeID, @PayGrade, @PasswordHash
+    );
+END;
+GO
+
+GO
 -- 3 Update an employees contact or personal details --
 GO
 CREATE PROC UpdateEmployeeInfo  
@@ -463,11 +560,11 @@ AS
 GO
 
 
-    CREATE PROCEDURE SyncOfflineAttendance
-    @DeviceID INT,
-    @EmployeeID INT,
-    @ClockTime DATETIME,
-    @Type VARCHAR(10)  -- 'IN' or 'OUT'
+CREATE PROCEDURE SyncOfflineAttendance
+@DeviceID INT,
+@EmployeeID INT,
+@ClockTime DATETIME,
+@Type VARCHAR(10)  -- 'IN' or 'OUT'
 AS
 BEGIN
     
@@ -525,7 +622,6 @@ END
 
     -- ------------------------------------------------------------------ --
 
-GO
 GO
 CREATE PROC LogAttendanceEdit
     @AttendanceID   INT,
@@ -956,67 +1052,8 @@ BEGIN
 END;
 -- 11  Create a new employee profile from a hiring form
 GO
-ALTER PROC CreateEmployeeProfile
-    @FirstName VARCHAR(50),
-    @LastName VARCHAR(50),
-    @DepartmentID INT,
-    @RoleID INT,
-    @HireDate DATE,
-    @Email VARCHAR(100),
-    @Phone VARCHAR(20),
-    @NationalID VARCHAR(50),
-    @DateOfBirth DATE,
-    @CountryOfBirth VARCHAR(100)
-AS
-BEGIN
-    DECLARE @FullName VARCHAR(120) = @FirstName + ' ' + @LastName;
-    DECLARE @NewEmployeeID INT;
 
-    -- Retrieve hashed password and salt from SESSION_CONTEXT
-    DECLARE @PasswordHash VARBINARY(64) = SESSION_CONTEXT(N'PasswordHash');
-    DECLARE @PasswordSalt VARBINARY(32) = SESSION_CONTEXT(N'PasswordSalt');
-
-    INSERT INTO Employee 
-    (
-        first_name,
-        last_name,
-        full_name,
-        department_id,
-        hire_date,
-        email,
-        phone,
-        national_id,
-        date_of_birth,
-        country_of_birth,
-        password_hash,
-        password_salt
-    )
-    VALUES 
-    (
-        @FirstName,
-        @LastName,
-        @FullName,
-        @DepartmentID,
-        @HireDate,
-        @Email,
-        @Phone,
-        @NationalID,
-        @DateOfBirth,
-        @CountryOfBirth,
-        @PasswordHash,
-        @PasswordSalt
-    );
-
-    SET @NewEmployeeID = SCOPE_IDENTITY();
-
-    INSERT INTO EmployeeRole (employee_id, role_id)
-    VALUES (@NewEmployeeID, @RoleID);
-
-    PRINT 'Employee profile created successfully.';
-    SELECT @NewEmployeeID AS EmployeeID;
-END;
-
-/*CREATE PROC CreateEmployeeProfile
+CREATE PROC CreateEmployeeProfile
     @FirstName VARCHAR(50),
     @LastName VARCHAR(50),
     @DepartmentID INT,
@@ -1067,8 +1104,7 @@ BEGIN
 
     PRINT 'Employee profile created successfully.' 
     SELECT @NewEmployeeID AS EmployeeID;
-END;*/
-
+END;
 -- 12  Edit or update any part of an employee profile
 GO
 CREATE PROC UpdateEmployeeProfile
@@ -1255,10 +1291,7 @@ CREATE PROC NotifyShiftExpiry
 @ExpiryDate DATE
 AS
 BEGIN
-   
-
-    
-    IF EXISTS (
+     IF EXISTS (
         SELECT 1
         FROM ShiftAssignment
         WHERE assignment_id = @ShiftAssignmentID
@@ -1465,9 +1498,7 @@ CREATE PROC AuthenticateLeaveAdmin
     @Password VARCHAR(100)
 AS
 BEGIN
-    
-    
-   
+       
     IF EXISTS (
         SELECT 1 
         FROM HRAdministrator 
