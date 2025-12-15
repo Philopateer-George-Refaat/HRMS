@@ -12,6 +12,18 @@ WHERE email = 'philo@example.com'; -- <--- PUT THE EMAIL YOU REGISTERED HERE
 
 
 
+DECLARE @MyManagerID INT;
+SELECT @MyManagerID = employee_id FROM Employee WHERE email = 'philo@example.com'; -- <--- PUT YOUR EMAIL HERE
+
+-- 1. Make Sara report to you
+UPDATE Employee 
+SET manager_id = @MyManagerID 
+WHERE employee_id = 2; -- Sara's ID
+
+-- 2. Create a Pending Leave Request for Sara
+INSERT INTO LeaveRequest (employee_id, leave_id, justification, duration, status, approval_timing)
+VALUES (2, 1, 'Need a vacation test', 5, 'Pending', GETDATE());
+
 -------------------------
 -- 1. Currency
 -------------------------
