@@ -176,7 +176,8 @@ ADD password_hash VARBINARY(64),
     password_salt VARBINARY(32);
 
 -------
-  
+ALTER TABLE Employee
+DROP COLUMN password_salt;
 
 CREATE TABLE HRAdministrator (
     employee_id INT PRIMARY KEY,
@@ -644,4 +645,4 @@ CREATE TABLE ManagerNotes (
     FOREIGN KEY (manager_id) REFERENCES Employee(employee_id)
 );
 -------
-
+Select * From Employee;
