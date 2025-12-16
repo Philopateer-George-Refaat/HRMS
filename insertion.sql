@@ -24,6 +24,54 @@ WHERE employee_id = 2; -- Sara's ID
 INSERT INTO LeaveRequest (employee_id, leave_id, justification, duration, status, approval_timing)
 VALUES (2, 1, 'Need a vacation test', 5, 'Pending', GETDATE());
 
+
+
+
+-- 1. Create a Contract that expires in 5 Days
+INSERT INTO Contract (type, start_date, end_date, current_state)
+VALUES ('Full-Time', DATEADD(year, -1, GETDATE()), DATEADD(day, 5, GETDATE()), 'Active');
+
+DECLARE @NewContractID INT = SCOPE_IDENTITY();
+
+-- 2. Create the New Employee "Mina Nabil"
+-- We use a known password hash for '123' or 'Password123' (copied from your existing data)
+INSERT INTO Employee (
+    first_name, last_name, full_name, email, 
+    national_id, date_of_birth, country_of_birth, phone, address,
+    hire_date, is_active, 
+    department_id, position_id, manager_id, 
+    contract_id, 
+    password_hash
+)
+VALUES (
+    'Mina', 'Nabil', 'Mina Nabil', 'mina@example.com', 
+    '11223344556677', '1995-01-01', 'Egypt', '01234567899', 'Giza',
+    '2024-01-01', 1, 
+    1, 1, 1, -- Assigning to Dept 1, Position 1, Manager 1 (Ahmed)
+    @NewContractID, 
+    HASHBYTES('SHA2_256', '123') -- Password is '123'
+);
+
+DECLARE @NewEmployeeID INT = SCOPE_IDENTITY();
+
+-- 3. Assign him the "Employee" Role (Role ID 5 based on your insertion file)
+-- If Role 5 doesn't exist, we fallback to finding the role by name
+DECLARE @EmployeeRoleID INT;
+SELECT @EmployeeRoleID = role_id FROM Role WHERE role_name = 'Employee';
+
+-- If 'Employee' role is missing, insert it dynamically
+IF @EmployeeRoleID IS NULL
+BEGIN
+    INSERT INTO Role (role_name, purpose) VALUES ('Employee', 'Regular Staff');
+    SET @EmployeeRoleID = SCOPE_IDENTITY();
+END
+
+INSERT INTO EmployeeRole (employee_id, role_id, assigned_date)
+VALUES (@NewEmployeeID, @EmployeeRoleID, GETDATE());
+
+PRINT 'User Created: Mina Nabil (mina@example.com / 123)';
+PRINT 'Contract Status: Expires in 5 days';
+
 -------------------------
 -- 1. Currency
 -------------------------
